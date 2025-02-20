@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { TaskDispatchContext } from "../context/TasksContext";
 
-function Task({ task, onChangeTask, onDeleteTask }) {
+function Task({ task }) {
   const [isEditing, setIsEditing] = useState(false);
+  const dispatch = useContext(TaskDispatchContext);
 
   let taskContent;
   if (isEditing) {
@@ -11,9 +13,12 @@ function Task({ task, onChangeTask, onDeleteTask }) {
           className="border p-2 mr-2"
           value={task.text}
           onChange={(e) =>
-            onChangeTask({
-              ...task,
-              text: e.target.value,
+            dispatch({
+              type: "changed",
+              task: {
+                ...task,
+                text: e.target.value,
+              },
             })
           }
         />
@@ -47,16 +52,24 @@ function Task({ task, onChangeTask, onDeleteTask }) {
           className="mr-2"
           checked={task.done}
           onChange={(e) =>
-            onChangeTask({
-              ...task,
-              done: e.target.checked,
+            dispatch({
+              type: "changed",
+              task: {
+                ...task,
+                done: e.target.checked,
+              },
             })
           }
         />
         {taskContent}
         <button
           className="bg-red-500 text-white p-2 rounded hover:bg-red-600"
-          onClick={() => onDeleteTask(task.id)}
+          onClick={() =>
+            dispatch({
+              type: "deleted",
+              id: task.id,
+            })
+          }
         >
           Delete
         </button>

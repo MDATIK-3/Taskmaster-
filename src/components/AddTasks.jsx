@@ -1,7 +1,11 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { TaskDispatchContext, TasksContext } from "../context/TasksContext";
+import { getNextId } from "../utils/getNextId.js";
 
-function AddTasks({ onAdd }) {
+function AddTasks() {
   const [text, setText] = useState("");
+  const dispatch = useContext(TaskDispatchContext);
+  const tasks = useContext(TasksContext);
 
   const handleChangeText = (e) => {
     setText(e.target.value);
@@ -19,7 +23,11 @@ function AddTasks({ onAdd }) {
         <button
           className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
           onClick={() => {
-            onAdd(text);
+            dispatch({
+              type: "added",
+              text,
+              id: getNextId(tasks) + 1,
+            });
             setText("");
           }}
         >
